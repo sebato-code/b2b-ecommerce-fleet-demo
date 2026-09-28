@@ -1,0 +1,78 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Descuentos B2B",
+    "version": "1.0.0",
+    "description": "API para calcular descuentos basados en el monto total de la compra."
+  },
+  "servers": [
+    {
+      "url": "/"
+    }
+  ],
+  "paths": {
+    "/descuentos/calcular": {
+      "post": {
+        "summary": "Calcula el descuento aplicable a una compra.",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "monto_total": {
+                    "type": "number",
+                    "description": "El monto total de la compra.",
+                    "example": 15000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Retorna el monto del descuento y el total después del descuento.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "monto_descuento": {
+                      "type": "number",
+                      "description": "El monto del descuento aplicado.",
+                      "example": 750
+                    },
+                    "total_con_descuento": {
+                      "type": "number",
+                      "description": "El monto total de la compra después de aplicar el descuento.",
+                      "example": 14250
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Error en la validación de la entrada.",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "error": {
+                      "type": "string",
+                      "description": "Mensaje de error detallando el problema.",
+                      "example": "El monto total de la compra debe ser un número positivo."
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

@@ -3,7 +3,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /descuentos/calcular:
+ * /api/descuentos:
  *   post:
  *     summary: Calcula el descuento aplicable a una compra.
  *     requestBody:
@@ -16,10 +16,10 @@ const router = express.Router();
  *               monto_total:
  *                 type: number
  *                 description: El monto total de la compra.
- *                 example: 15000
+ *                 example: 15000.50
  *     responses:
  *       200:
- *         description: Retorna el monto del descuento y el total después del descuento.
+ *         description: Información del descuento aplicado.
  *         content:
  *           application/json:
  *             schema:
@@ -27,14 +27,14 @@ const router = express.Router();
  *               properties:
  *                 monto_descuento:
  *                   type: number
- *                   description: El monto del descuento aplicado.
- *                   example: 750
+ *                   description: El monto del descuento calculado.
+ *                   example: 750.025
  *                 total_con_descuento:
  *                   type: number
- *                   description: El monto total de la compra después de aplicar el descuento.
- *                   example: 14250
+ *                   description: El monto total después de aplicar el descuento.
+ *                   example: 14250.475
  *       400:
- *         description: Error en la validación de la entrada.
+ *         description: Monto total inválido.
  *         content:
  *           application/json:
  *             schema:
@@ -42,20 +42,19 @@ const router = express.Router();
  *               properties:
  *                 error:
  *                   type: string
- *                   description: Mensaje de error detallando el problema.
- *                   example: "El monto total de la compra debe ser un número positivo."
+ *                   example: "El monto total debe ser un número positivo."
  */
-router.post('/calcular', (req, res) => {
+router.post('/', (req, res) => {
   const { monto_total } = req.body;
 
-  // Validación de entrada: monto_total debe ser un número positivo
-  if (typeof monto_total !== 'number' || monto_total <= 0) {
+  if (typeof monto_total !== 'number' || monto_total < 0) {
     return res.status(400).json({
-      error: 'El monto total de la compra debe ser un número positivo.'
+      error: 'El monto total debe ser un número positivo.'
     });
   }
 
   let monto_descuento = 0;
+  let total_con_descuento = monto_total;
 
   if (monto_total > 50000) {
     monto_descuento = monto_total * 0.10;
@@ -63,7 +62,7 @@ router.post('/calcular', (req, res) => {
     monto_descuento = monto_total * 0.05;
   }
 
-  const total_con_descuento = monto_total - monto_descuento;
+  total_con_descuento = monto_total - monto_descuento;
 
   res.json({
     monto_descuento,

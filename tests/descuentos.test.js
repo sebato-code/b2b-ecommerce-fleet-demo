@@ -1,34 +1,45 @@
 const { calcularDescuento } = require('../src/descuentos');
 
 describe('calcularDescuento', () => {
-    test('debería retornar 10% de descuento para compras mayores a $50,000', () => {
-        const totalCompra = 60000;
-        const resultado = calcularDescuento(totalCompra);
-        expect(resultado.descuento).toBe(6000);
-        expect(resultado.totalFinal).toBe(54000);
-    });
-
-    test('debería retornar 5% de descuento para compras entre $10,001 y $50,000', () => {
-        const totalCompra = 20000;
-        const resultado = calcularDescuento(totalCompra);
-        expect(resultado.descuento).toBe(1000);
-        expect(resultado.totalFinal).toBe(19000);
-    });
-
-    test('debería retornar 0% de descuento para compras menores o iguales a $10,000', () => {
-        const totalCompra = 10000;
-        const resultado = calcularDescuento(totalCompra);
+    test('Sin descuento para compras <= $10,000', () => {
+        const resultado = calcularDescuento(10000);
         expect(resultado.descuento).toBe(0);
         expect(resultado.totalFinal).toBe(10000);
     });
 
-    test('debería manejar montos exactos de los umbrales', () => {
-        const resultadoUmbralSuperior = calcularDescuento(50000);
-        expect(resultadoUmbralSuperior.descuento).toBe(2500);
-        expect(resultadoUmbralSuperior.totalFinal).toBe(47500);
+    test('5% de descuento para compras > $10,000 y <= $50,000', () => {
+        const resultado = calcularDescuento(12000);
+        expect(resultado.descuento).toBe(600);
+        expect(resultado.totalFinal).toBe(11400);
+    });
 
-        const resultadoUmbralInferior = calcularDescuento(10000);
-        expect(resultadoUmbralInferior.descuento).toBe(0);
-        expect(resultadoUmbralInferior.totalFinal).toBe(10000);
+    test('10% de descuento para compras > $50,000', () => {
+        const resultado = calcularDescuento(60000);
+        expect(resultado.descuento).toBe(6000);
+        expect(resultado.totalFinal).toBe(54000);
+    });
+
+    test('Manejo de monto cero', () => {
+        const resultado = calcularDescuento(0);
+        expect(resultado.descuento).toBe(0);
+        expect(resultado.totalFinal).toBe(0);
+    });
+
+    test('Límite inferior del 5% de descuento', () => {
+        const resultado = calcularDescuento(10000.01);
+        expect(resultado.descuento).toBeCloseTo(500.0005);
+        expect(resultado.totalFinal).toBeCloseTo(9500.0095);
+    });
+
+    test('Límite superior del 5% de descuento', () => {
+        const resultado = calcularDescuento(50000);
+        expect(resultado.descuento).toBe(2500);
+        expect(resultado.totalFinal).toBe(47500);
+    });
+
+    test('Límite inferior del 10% de descuento', () => {
+        const resultado = calcularDescuento(50000.01);
+        expect(resultado.descuento).toBeCloseTo(5000.001);
+        expect(resultado.totalFinal).toBeCloseTo(45000.009);
     });
 });

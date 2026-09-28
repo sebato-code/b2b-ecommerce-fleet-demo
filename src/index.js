@@ -1,16 +1,28 @@
 const express = require('express');
-const { authMiddleware } = require('./middleware/auth');
-const orderRouter = require('./controllers/OrderController');
+const bodyParser = require('body-parser');
+const { calcularDescuento } = require('./descuentos');
 
 const app = express();
-app.use(express.json());
+const PORT = process.env.PORT || 3000;
 
-app.get('/health', (req, res) => res.json({ status: 'healthy', uptime: process.uptime() }));
-app.use('/api/v1/orders', authMiddleware, orderRouter);
+app.use(bodyParser.json());
 
-if (require.main === module) {
-  const PORT = process.env.PORT || 3000;
-  app.listen(PORT, () => console.log(`B2B E-commerce Service listening on port ${PORT}`));
-}
+app.post('/api/descuentos', (req, res) => {
+    const { monto_total } = req.body;
 
-module.exports = app;
+    // Validación de entrada
+    if (typeof monto_total !== 'number' || monto_total < 0) {
+        return res.status(400).json({ error: 'El monto total de la compra debe ser un número positivo.' });
+    }
+
+    const { descuento, totalFinal } = calcularDescuento(monto_total);
+    
+    res.json({
+        descuento,
+        total_final: totalFinal
+    });
+});
+
+app.listen(PORT, () => {
+    console.log(`Servidor corriendo en http://localhost:${PORT}`);
+});

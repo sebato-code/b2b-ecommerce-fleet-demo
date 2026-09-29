@@ -1,5 +1,5 @@
 /**
- * Calcula el descuento y el total final basado en el monto total de la compra.
+ * Calcula el descuento a aplicar según el monto total de la compra.
  *
  * @param {number} montoTotal - El monto total de la compra.
  * @returns {{descuento: number, totalFinal: number}}

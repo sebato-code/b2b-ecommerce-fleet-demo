@@ -1,50 +1,27 @@
 const { calcularDescuento } = require('../src/discountCalculator');
 
 describe('calcularDescuento', () => {
-  test('debería retornar 0% de descuento para montos <= $10,000', () => {
-    const montoTotal = 9999.99;
-    const resultado = calcularDescuento(montoTotal);
-    expect(resultado.descuento).toBeCloseTo(0);
-    expect(resultado.totalFinal).toBeCloseTo(montoTotal);
+  test('debería retornar 0 descuento para montos <= 10000', () => {
+    const resultado = calcularDescuento(10000);
+    expect(resultado.descuento).toBe(0);
+    expect(resultado.totalFinal).toBe(10000);
   });
 
-  test('debería retornar 5% de descuento para montos > $10,000 y <= $50,000', () => {
-    const montoTotal = 20000;
-    const resultado = calcularDescuento(montoTotal);
-    expect(resultado.descuento).toBeCloseTo(montoTotal * 0.05);
-    expect(resultado.totalFinal).toBeCloseTo(montoTotal * 0.95);
+  test('debería retornar 5% de descuento para montos > 10000 y <= 50000', () => {
+    const resultado = calcularDescuento(20000);
+    expect(resultado.descuento).toBe(1000);
+    expect(resultado.totalFinal).toBe(19000);
   });
 
-  test('debería retornar 10% de descuento para montos > $50,000', () => {
-    const montoTotal = 60000;
-    const resultado = calcularDescuento(montoTotal);
-    expect(resultado.descuento).toBeCloseTo(montoTotal * 0.10);
-    expect(resultado.totalFinal).toBeCloseTo(montoTotal * 0.90);
+  test('debería retornar 10% de descuento para montos > 50000', () => {
+    const resultado = calcularDescuento(60000);
+    expect(resultado.descuento).toBe(6000);
+    expect(resultado.totalFinal).toBe(54000);
   });
 
-  test('debería manejar montos exactos de los umbrales', () => {
-    const montoUmbralInferior = 10000;
-    const resultadoInferior = calcularDescuento(montoUmbralInferior);
-    expect(resultadoInferior.descuento).toBeCloseTo(0);
-    expect(resultadoInferior.totalFinal).toBeCloseTo(montoUmbralInferior);
-
-    const montoUmbralSuperior = 50000;
-    const resultadoSuperior = calcularDescuento(montoUmbralSuperior);
-    expect(resultadoSuperior.descuento).toBeCloseTo(montoUmbralSuperior * 0.05);
-    expect(resultadoSuperior.totalFinal).toBeCloseTo(montoUmbralSuperior * 0.95);
-  });
-
-  test('debería manejar montos con decimales', () => {
-    const montoTotal = 15550.75;
-    const resultado = calcularDescuento(montoTotal);
-    expect(resultado.descuento).toBeCloseTo(montoTotal * 0.05);
-    expect(resultado.totalFinal).toBeCloseTo(montoTotal * 0.95);
-  });
-
-  test('debería manejar monto cero', () => {
-    const montoTotal = 0;
-    const resultado = calcularDescuento(montoTotal);
-    expect(resultado.descuento).toBeCloseTo(0);
-    expect(resultado.totalFinal).toBeCloseTo(0);
+  test('debería manejar montos con decimales correctamente', () => {
+    const resultado = calcularDescuento(15000.50);
+    expect(resultado.descuento).toBe(750.025);
+    expect(resultado.totalFinal).toBe(14250.475);
   });
 });

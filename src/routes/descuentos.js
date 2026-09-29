@@ -3,7 +3,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /descuentos/calcular:
+ * /api/descuentos:
  *   post:
  *     summary: Calcula el descuento aplicable a una compra.
  *     requestBody:
@@ -13,10 +13,10 @@ const router = express.Router();
  *           schema:
  *             type: object
  *             properties:
- *               total_compra:
+ *               monto_total:
  *                 type: number
- *                 format: float
  *                 description: El monto total de la compra.
+ *                 example: 12000
  *     responses:
  *       200:
  *         description: Información del descuento aplicado.
@@ -27,36 +27,46 @@ const router = express.Router();
  *               properties:
  *                 monto_descuento:
  *                   type: number
- *                   format: float
  *                   description: El monto del descuento aplicado.
+ *                   example: 600
  *                 total_con_descuento:
  *                   type: number
- *                   format: float
- *                   description: El total de la compra después de aplicar el descuento.
+ *                   description: El monto total después de aplicar el descuento.
+ *                   example: 11400
  *       400:
- *         description: Bad Request - El monto total de la compra es inválido.
+ *         description: Solicitud inválida.
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: object
+ *               properties:
+ *                 error:
+ *                   type: string
+ *                   description: Mensaje de error.
+ *                   example: "monto_total es requerido y debe ser un número."
  */
-router.post('/calcular', (req, res) => {
-  const { total_compra } = req.body;
+router.post('/', (req, res) => {
+  const { monto_total } = req.body;
 
-  if (typeof total_compra !== 'number' || isNaN(total_compra)) {
-    return res.status(400).json({ error: 'El monto total de la compra debe ser un número válido.' });
+  if (typeof monto_total !== 'number' || monto_total === undefined) {
+    return res.status(400).json({
+      error: "monto_total es requerido y debe ser un número."
+    });
   }
 
   let monto_descuento = 0;
-  let total_con_descuento = total_compra;
 
-  if (total_compra > 50000) {
-    monto_descuento = total_compra * 0.10;
-  } else if (total_compra > 10000) {
-    monto_descuento = total_compra * 0.05;
+  if (monto_total > 50000) {
+    monto_descuento = monto_total * 0.10;
+  } else if (monto_total > 10000) {
+    monto_descuento = monto_total * 0.05;
   }
 
-  total_con_descuento = total_compra - monto_descuento;
+  const total_con_descuento = monto_total - monto_descuento;
 
-  res.json({
-    monto_descuento: parseFloat(monto_descuento.toFixed(2)),
-    total_con_descuento: parseFloat(total_con_descuento.toFixed(2))
+  res.status(200).json({
+    monto_descuento,
+    total_con_descuento
   });
 });
 
